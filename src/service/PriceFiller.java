@@ -2,10 +2,13 @@ package service;
 
 import model.BrandName;
 import model.OrderItem;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
 public class PriceFiller {
+    private static final Logger LOGGER = Logger.getLogger(BoundleCalculator.class);
+
     public void showResult(ArrayList arr, BrandName brandName, OrderItem orderItem) {
         if (brandName.getItemName().equalsIgnoreCase("IMG")) {
             IMG(arr, orderItem);

@@ -1,47 +1,45 @@
 package service;
 import java.util.*;
 import model.*;
+import org.apache.log4j.Logger;
+
 public class OrderParser {
-    BrandNameFiller olf = new BrandNameFiller();
-    BrandName oi = new model.BrandName();
+    private static final Logger LOGGER = Logger.getLogger(BoundleCalculator.class);
+
+    BrandNameFiller brandNameFiller = new BrandNameFiller();
+    BrandName brandName = new model.BrandName();
     OrderItem orderItems = new OrderItem();
+    OrderItemFiller orderItemFiller = new OrderItemFiller();
 //    OrderNumFiller onf = new OrderNumFiller();
 
 
     public void getUserInput(){
-        System.out.println("Please input the brand name like IMG(Image), FLAC(Audio) and VID(Video)");
-
-        Scanner console = new Scanner(System.in);
-        String orderItem = olf.fillOrderItem(console.nextLine());
-        oi.setItemName(orderItem);
-
-
-        System.out.println("Please input the item number");
-        Scanner console2 = new Scanner(System.in);
-        int number = 0;
-        boolean isNumber = false;
-        do{
-            if(console2.hasNextInt()){
-                number = console2.nextInt();
-                if(number == 0){
-                    System.out.println("The number cannot be 0");
-                    isNumber = false;
-                }else {
-                    isNumber = true;
+        boolean isFlag = true;
+        boolean isBrand;
+        boolean isNum;
+        while(isFlag) {
+            Scanner console = new Scanner(System.in);
+            String input = console.nextLine();
+            if (input.contains("/")) {
+                String[] parts = input.split("/", 2);
+                isBrand = brandNameFiller.fillOrderItem(parts[0]);
+                isNum = orderItemFiller.isInteger(parts[1]);
+                if(isBrand == true && isNum == true){
+                    brandName.setItemName(parts[0]);
+                    orderItems.setOrderItem(Integer.valueOf(parts[1]));
+                    isFlag = false;
+                }else{
+                    LOGGER.info("Please input the correct brand name and the item number must be greater than 0 ");
                 }
+            }else{
+                LOGGER.info("Please input / between brand and order number");
             }
-            else{
-                System.out.println("Please enter a integer");
-                isNumber = false;
-                console2.next();
-            }
-        }while(!(isNumber));
-        orderItems.setOrderItem(number);
+        }
     }
     public OrderItem getOrderItems(){
         return orderItems;
     }
     public BrandName getOi(){
-        return oi;
+        return brandName;
     }
 }
